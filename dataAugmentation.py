@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # Visualising and save data.
 def visualise_data(data, filename: str):
-    plt.scatter(init_data[:, 0], init_data[:, 1], c=init_data[:,2], cmap="coolwarm", edgecolors="k")
+    plt.scatter(data[:, 0],data[:, 1], c=data[:,2], cmap="coolwarm", edgecolors="k")
     os.makedirs("results", exist_ok=True)
     plt.savefig(f"results/{filename}.png")
 
@@ -15,43 +15,56 @@ def save_data_as_csv(data, filename:str):
     os.makedirs("dataFiles", exist_ok=True)
     np.savetxt(f"dataFiles/{filename}.csv", init_data, delimiter=',')
 
-# Augmenting the data.
-def augment_data(data, num_samples):
+# To generate an random linearly separable dataset.
+def augment_uniformly():
+    np.random.seed(42)
+    augmented_data = []
+    X = np.random.randn(100, 2)  # 100 samples, 2 features
+    y = np.where(X[:, 0] + X[:, 1] > 0, 1, -1)  # Label: 1 if x1 + x2 > 0, else -1: to make it seperable.
+    augmented_data = np.column_stack((X, y))
+    return augmented_data
+
+#  To generate a dataset by adding gusian noise to the initial dataset of 5 samples.
+def augment_gausian(data, num_samples):
     augmented_data = []
     for _ in range(num_samples):
         # Randomly select a point from the original data.
         point = data[np.random.randint(0, len(data))]
         # Add Gaussian noise to the selected point.
-        noise = np.random.normal(0, 0.1, size=point.shape)
+        noise = np.random.normal(0, 1, size=point.shape)
         augmented_point = point + noise
         augmented_data.append(augmented_point)
+        # the label also needs to be set.
     return np.array(augmented_data)
+
+# absolutely randomness.
+def augment_randomly(data, num_samples):
+    augmented_data = []
+    max_Xvalue = np.max(data[:, 0])
+    min_Xvalue = np.min(data[:, 0])
+    max_Yvalue = np.max(data[:, 1])
+    min_Yvalue = np.min(data[:, 1])
+    X = np.random.uniform(min_Xvalue, max_Xvalue, num_samples)
+    Y = np.random.uniform(min_Yvalue, max_Yvalue, num_samples)
+    y = np.random.choice([-1, 1], size=num_samples)
+    augmented_data = np.column_stack((X,Y,y))
+    return augmented_data
 
 # Main Execution
 if __name__ == "__main__":
 
     init_data = np.loadtxt('dataFiles/init_data.csv', delimiter=',')
     visualise_data(init_data, "init_data")
+
     # Generate augmented data.
-    augmented_data = augment_data(init_data, 100)
+    # augmented_data = augment_uniformly()
+    # augmented_data = augment_gausian(init_data,100)
+    augmented_data = augment_randomly(init_data,100)
+    
     visualise_data(augmented_data, "augmented_data")
     save_data_as_csv(augmented_data,"augmented_data")
 
 
-    # complete_init_data = np.loadtxt('dataFiles/comp_init_data.csv', delimiter=',')
-    # ig, axes = plt.subplots(nrows=3, ncols=2, figsize=(8, 12),
-    #                          constrained_layout=True)
-    # ax = axes[0, 1]
-    # ax.set_title("Pretrained Model on Train Data")
+    
 
 
-
-
-# To do:
-# 1. Need to plot based on the label, not just x,y scatter plot.
-# 2. Visualise, save n stuff init data and augment data with decision surface etc.
-# 3. complete with plots and stuff the first question.
-# 4. complete with plots, and tuning and stuff the second question.
-
-# 4. understand the starter code given.
-# 5. 3 and 4the question.
