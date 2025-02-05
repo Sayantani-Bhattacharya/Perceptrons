@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 # Visualising and save data.
 def visualise_data(data, filename: str):
+    plt.clf()
+    # To make it a binary classifycation problem.
+    data[:,2] = np.where(data[:,2] > 0, 1, np.where(data[:,2] < 0, -1, 0))  
     plt.scatter(data[:, 0],data[:, 1], c=data[:,2], cmap="coolwarm", edgecolors="k")
     os.makedirs("results", exist_ok=True)
     plt.savefig(f"results/{filename}.png")
@@ -13,14 +16,14 @@ def visualise_data(data, filename: str):
 # Saving the data as CSV.
 def save_data_as_csv(data, filename:str):
     os.makedirs("dataFiles", exist_ok=True)
-    np.savetxt(f"dataFiles/{filename}.csv", init_data, delimiter=',')
+    np.savetxt(f"dataFiles/{filename}.csv", data, delimiter=',')
 
 # To generate an random linearly separable dataset.
 def augment_uniformly():
     np.random.seed(42)
     augmented_data = []
     X = np.random.randn(100, 2)  # 100 samples, 2 features
-    y = np.where(X[:, 0] + X[:, 1] > 0, 1, -1)  # Label: 1 if x1 + x2 > 0, else -1: to make it seperable.
+    y = np.where(X[:, 0] + X[:, 1] >= 0, 1, -1)  # Label: 1 if x1 + x2 > 0, else -1: to make it seperable.
     augmented_data = np.column_stack((X, y))
     return augmented_data
 
@@ -58,8 +61,8 @@ if __name__ == "__main__":
 
     # Generate augmented data.
     # augmented_data = augment_uniformly()
-    # augmented_data = augment_gausian(init_data,100)
-    augmented_data = augment_randomly(init_data,100)
+    augmented_data = augment_gausian(init_data,100)
+    # augmented_data = augment_randomly(init_data,100)
     
     visualise_data(augmented_data, "augmented_data")
     save_data_as_csv(augmented_data,"augmented_data")

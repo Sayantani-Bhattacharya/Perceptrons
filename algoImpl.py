@@ -59,7 +59,7 @@ def train_perceptron(X, y, loss_fn, lr=0.01, epochs=100):
 
     return w, b, losses
 
-# Generate an augmented dataset
+# To generate an random linearly separable dataset.
 def generate_dataset():
     np.random.seed(42)
     X = np.random.randn(100, 2)  # 100 samples, 2 features
@@ -71,18 +71,27 @@ def plot_decision_boundary(X, y, w, b, title="Decision Boundary"):
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, 0.01),
-                           np.arange(x2_min, x2_max, 0.01))
+                           np.arange(x2_min, x2_max, 0.01))  
     Z = np.dot(np.c_[xx1.ravel(), xx2.ravel()], w) + b
     Z = Z.reshape(xx1.shape)
+    # To account for z values not being exact 0, -1 and 1.
+    Z = np.where(Z > 0, 1, np.where(Z < 0, -1, 0))      
     plt.contourf(xx1, xx2, Z, levels=[-1, 0, 1], alpha=0.7, cmap="coolwarm")
     plt.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolors="k")
     plt.title(title)
     plt.show()
+    # plt.savefig(f"results/{"Boundary"}.png")
 
 # Main Execution
 if __name__ == "__main__":
+
     # Generate dataset
-    X, y = generate_dataset()
+    # X, y = generate_dataset()
+
+    # Load the augmented dataset.
+    aug_data = np.loadtxt('dataFiles/augmented_data.csv', delimiter=',')
+    X = aug_data[:, :2]
+    y = aug_data[:, 2]
 
     # Split the dataset
     n = len(X)
@@ -100,7 +109,7 @@ if __name__ == "__main__":
         w, b, losses = train_perceptron(train_X, train_y, loss_fn, lr=0.1, epochs=50)
         
         # Plot decision boundary
-        plot_decision_boundary(train_X, train_y, w, b, title=f"{loss_name} Decision Boundary")
+        plot_decision_boundary(train_X, train_y, w, b, title=f"{loss_name} Decision Boundary")        
 
         # Print final weights and bias
         print(f"Weights: {w}, Bias: {b}")
@@ -110,3 +119,16 @@ if __name__ == "__main__":
         test_accuracy = np.mean(np.sign(np.dot(test_X, w) + b) == test_y)
         print(f"Validation Accuracy: {val_accuracy*100:.2f}%")
         print(f"Test Accuracy: {test_accuracy*100:.2f}%\n")
+
+    # Plotting initial decision boundary.
+    # init_data = np.loadtxt('dataFiles/comp_init_data.csv', delimiter=',')
+    # w = np.array([0.9, -1.3])
+    # b = np.float64(1.0)
+    # plot_decision_boundary(init_data, init_data[:,2], w, b, title=f"Initial Decision Boundary")
+
+# Ploting asthetics.
+# complete_init_data = np.loadtxt('dataFiles/comp_init_data.csv', delimiter=',')
+    # ig, axes = plt.subplots(nrows=3, ncols=2, figsize=(8, 12),
+    #                          constrained_layout=True)
+    # ax = axes[0, 1]
+    # ax.set_title("Pretrained Model on Train Data")
