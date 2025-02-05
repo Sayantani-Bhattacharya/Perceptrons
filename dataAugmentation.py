@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # Visualising and save data.
 def visualise_data(data, filename: str):
-    plt.scatter(init_data[:, 0], init_data[:, 1])
+    plt.scatter(init_data[:, 0], init_data[:, 1], c=init_data[:,2], cmap="coolwarm", edgecolors="k")
     os.makedirs("results", exist_ok=True)
     plt.savefig(f"results/{filename}.png")
 
@@ -49,10 +49,9 @@ if __name__ == "__main__":
 
 # To do:
 # 1. Need to plot based on the label, not just x,y scatter plot.
-# 2.visualise, save n stuff init data and augment data with decision surface etc.
-# 2. complete with plots and stuff the first question.
-# 3. complete with plots, and tuning and stuff the second question.
-
+# 2. Visualise, save n stuff init data and augment data with decision surface etc.
+# 3. complete with plots and stuff the first question.
+# 4. complete with plots, and tuning and stuff the second question.
 
 # 4. understand the starter code given.
 # 5. 3 and 4the question.
