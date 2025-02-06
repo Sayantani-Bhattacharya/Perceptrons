@@ -32,5 +32,5 @@ The repository contains:
    - Best trained model:
      
       <p align="center">
-        <img src="/results/Hinge_loss_uniform.png" alt="Alt text" width="300"/>
+        <img src="/results/bestNetwork.png" alt="Alt text" width="500"/>
       </p>
